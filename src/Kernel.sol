@@ -20,7 +20,7 @@ import {
 } from "./common/Constants.sol";
 import {Operation} from "./common/Enums.sol";
 import {WalletKernelStorage, Call, ExecutionDetail} from "./common/Structs.sol";
-import {ValidationData, ValidAfter, ValidUntil, parseValidationData, packValidationData} from "./common/Types.sol";
+import {ValidationData, ValidAfter, ValidUntil, parseValidationData, packValidationData, packAggregatorValidationData} from "./common/Types.sol";
 
 /// @title Kernel
 /// @author taek<leekt216@gmail.com>
@@ -190,6 +190,18 @@ contract Kernel is EIP712, Compatibility, KernelStorage {
             // userOpSignature[16:36] = validator address,
             (validator, validationData, userOpSignature) =
                 _approveValidator(bytes4(userOpCallData[0:4]), userOpSignature);
+        } else if (mode == 0x00000004) { // mode == aggragator mode, use default validator as aggregator
+            if (missingAccountFunds != 0) {
+                assembly {
+                    pop(call(gas(), caller(), missingAccountFunds, callvalue(), callvalue(), callvalue(), callvalue()))
+                }
+                //ignore failure (its EntryPoint's job to verify, not account.)
+            }
+            assembly {
+                validator := shr(80, sload(KERNEL_STORAGE_SLOT_1))
+            }
+            require(address(validator) != address(0), "aggregator not set");
+            return packAggregatorValidationData(address(validator), ValidAfter.wrap(0), ValidUntil.wrap(0));
         } else {
             return SIG_VALIDATION_FAILED;
         }
