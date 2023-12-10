@@ -80,7 +80,7 @@ contract KernelECDSAAggregatorTest is KernelTestBase {
                 IKernel.execute.selector,
                 address(defaultValidator),
                 0,
-                abi.encodeWithSelector(ECDSAAggregatedValidator.enable.selector, abi.encodePacked(address(0xdeadbeef))),
+                abi.encodeWithSelector(ECDSAAggregatedValidator.enable.selector, abi.encodePacked(address(0xdeadbeef), address(0))),
                 Operation.Call
             )
         );
