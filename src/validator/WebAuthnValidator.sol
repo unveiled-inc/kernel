@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
@@ -17,12 +16,11 @@ struct WebAuthnValidatorData {
 }
 
 contract WebAuthnValidator is IKernelValidator {
-
     error InvalidPublicKey();
 
     event WebAuthnPublicKeyChanged(address indexed kernel, WebAuthnValidatorData newPubKey);
 
-    mapping(address kernel => WebAuthnValidatorData WebAuthnValidatorData) public webAuthnValidatorStorage; 
+    mapping(address kernel => WebAuthnValidatorData WebAuthnValidatorData) public webAuthnValidatorStorage;
 
     function enable(bytes calldata _data) external payable override {
         WebAuthnValidatorData memory pubKey = abi.decode(_data, (WebAuthnValidatorData));
@@ -46,11 +44,20 @@ contract WebAuthnValidator is IKernelValidator {
         return _verifySignature(_userOp.sender, _userOpHash, _userOp.signature);
     }
 
-    function validateSignature(bytes32 hash, bytes calldata signature) external view override returns (ValidationData) {
+    function validateSignature(bytes32 hash, bytes calldata signature)
+        external
+        view
+        override
+        returns (ValidationData)
+    {
         return _verifySignature(msg.sender, hash, signature);
     }
 
-    function _verifySignature(address sender, bytes32 hash, bytes calldata signature) private view returns (ValidationData) {
+    function _verifySignature(address sender, bytes32 hash, bytes calldata signature)
+        private
+        view
+        returns (ValidationData)
+    {
         (
             bytes memory authenticatorData,
             string memory clientDataJSON,
@@ -58,10 +65,7 @@ contract WebAuthnValidator is IKernelValidator {
             uint256 responseTypeLocation,
             uint256 r,
             uint256 s
-        ) = abi.decode(
-                signature,
-                (bytes, string, uint256, uint256, uint256, uint256)
-            );
+        ) = abi.decode(signature, (bytes, string, uint256, uint256, uint256, uint256));
 
         WebAuthnValidatorData memory pubKey = webAuthnValidatorStorage[sender];
 
