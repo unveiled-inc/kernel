@@ -27,8 +27,10 @@ typechain-types
 # Hardhat files
 cache
 artifacts
+artifacts-zk
 artifacts-selected
 
 cache_hardhat
+cache_hardhat-zk
 
 lcov.info

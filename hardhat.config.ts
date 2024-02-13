@@ -4,7 +4,9 @@ import "@nomicfoundation/hardhat-foundry";
 import "@nomiclabs/hardhat-ethers";
 import "hardhat-deploy";
 import '@typechain/hardhat'
-import "./tasks/test_userOp"
+import "@matterlabs/hardhat-zksync-solc";
+import "@matterlabs/hardhat-zksync-deploy";
+import "@matterlabs/hardhat-zksync-verify";
 dotenv.config()
 
 
@@ -20,8 +22,24 @@ function getAccounts(): string[] | { mnemonic: string } {
 }
 
 const config: HardhatUserConfig = {
+  zksolc: {
+    version: "1.3.22", // optional.
+    settings: {
+      optimizer: {
+        enabled: true, // optional. True by default
+        mode: 'z', // optional. 3 by default, z to optimize bytecode size
+        fallback_to_optimizing_for_size: false, // optional. Try to recompile with optimizer mode "z" if the bytecode is too large
+      },
+      experimental: {
+        dockerImage: '', // deprecated
+        tag: ''   // deprecated
+      },
+      contractsToCompile: [], //optional. Compile only specific contracts
+    }
+  },
   solidity: {
-    version: "0.8.18",
+    version: "0.8.19",
+    eraVersion: "1.0.0",
     settings: {
       optimizer: {
         enabled: true,
@@ -86,6 +104,13 @@ const config: HardhatUserConfig = {
       url: `https://icy-long-mountain.base-goerli.quiknode.pro/5b80d93e97cc9412a63c10a30841869abbef9596`,
       accounts: getAccounts(),
     },
+    zkTestnet: {
+      url: "https://sepolia.era.zksync.dev", // The testnet RPC URL of zkSync Era network.
+      ethNetwork: "sepolia", // The Ethereum Web3 RPC URL, or the identifier of the network (e.g. `mainnet` or `sepolia`)
+      zksync: true,
+      verifyURL: 'https://explorer.sepolia.era.zksync.dev/contract_verification',
+      accounts : getAccounts()
+    }
   }
 };
 
