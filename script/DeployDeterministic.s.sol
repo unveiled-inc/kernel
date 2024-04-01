@@ -10,31 +10,22 @@ import "./deterministic/Kernel2_2.s.sol";
 import "./deterministic/Kernel2_3.s.sol";
 
 contract DeployDeterministic is Script {
-    address constant DEPLOYER = 0x9775137314fE595c943712B0b336327dfa80aE8A;
-
     function run() external {
+        // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address DEPLOYER = address(0x77bbFD2d630A9123Ae5da78a7Af8856983223c8A);
         vm.startBroadcast(DEPLOYER);
         KernelFactory factory = KernelFactory(payable(FactoryDeploy.deploy()));
 
-        ECDSAValidatorDeploy.deploy();
-        SessionKeyDeploy.deploy();
+        address k24 = address(0xd3082872F8B06073A021b4602e022d5A070d7cfC);
+        address k23lite = address(0x482EC42E88a781485E1B6A4f07a0C5479d183291);
 
-        //(address k22, address k22lite) = Kernel_2_2_Deploy.deploy();
-
-        //if(!factory.isAllowedImplementation(k22)) {
-        //    factory.setImplementation(k22, true);
-        //}
-        //if(!factory.isAllowedImplementation(k22lite)) {
-        //    factory.setImplementation(k22lite, true);
-        //}
-
-        (address k23, address k23lite) = Kernel_2_3_Deploy.deploy();
-        if (!factory.isAllowedImplementation(k23)) {
-            factory.setImplementation(k23, true);
+        if (!factory.isAllowedImplementation(k24)) {
+            factory.setImplementation(k24, true);
         }
         if (!factory.isAllowedImplementation(k23lite)) {
             factory.setImplementation(k23lite, true);
         }
+
         vm.stopBroadcast();
     }
 }
