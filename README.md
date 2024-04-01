@@ -42,6 +42,7 @@ MIT
 | Name          | Address                                    |
 | ------------- | ------------------------------------------ |
 | KernelFactory | 0x2b5f79B0a0A78Ecc9E339Cc6cb5d86de05Aa9364 |
+| Kernel        | 0xac8C2458377Bd372221007CC91739d9FC6a7B957 |
 
 </details>
 

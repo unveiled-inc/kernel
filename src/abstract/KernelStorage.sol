@@ -8,6 +8,7 @@ import {IKernel} from "../interfaces/IKernel.sol";
 import {KERNEL_STORAGE_SLOT, KERNEL_STORAGE_SLOT_1, IMPLEMENTATION_SLOT} from "../common/Constants.sol";
 import {ExecutionDetail, WalletKernelStorage} from "../common/Structs.sol";
 import {ValidUntil, ValidAfter} from "../common/Types.sol";
+import {IRegistry} from "../interfaces/IRegistry.sol";
 
 /// @title Kernel Storage Contract
 /// @author taek<leekt216@gmail.com>
@@ -32,8 +33,12 @@ abstract contract KernelStorage is IKernel {
     }
 
     // Function to initialize the wallet kernel
-    function initialize(IKernelValidator _defaultValidator, bytes calldata _data) external payable override {
-        _setInitialData(_defaultValidator, _data);
+    function initialize(IKernelValidator _defaultValidator, bytes calldata _data, address _registryAddr)
+        external
+        payable
+        override
+    {
+        _setInitialData(_defaultValidator, _data, _registryAddr);
     }
 
     // Function to get the wallet kernel storage
@@ -116,7 +121,10 @@ abstract contract KernelStorage is IKernel {
         getKernelStorage().lastDisabledTime = uint48(block.timestamp);
     }
 
-    function _setInitialData(IKernelValidator _defaultValidator, bytes calldata _data) internal virtual {
+    function _setInitialData(IKernelValidator _defaultValidator, bytes calldata _data, address _registryAddr)
+        internal
+        virtual
+    {
         address validator;
         assembly {
             validator := shr(80, sload(KERNEL_STORAGE_SLOT_1))
@@ -126,5 +134,20 @@ abstract contract KernelStorage is IKernel {
         }
         getKernelStorage().defaultValidator = _defaultValidator;
         _defaultValidator.enable(_data);
+
+        // add 1tx module
+        bytes4 _moduleSelector = 0xe72466e5;
+        address _executorAddr = IRegistry(_registryAddr).getAddr(bytes4(keccak256(abi.encodePacked("Executor"))));
+        address _validatorAddr = IRegistry(_registryAddr).getAddr(bytes4(keccak256(abi.encodePacked("Validator"))));
+        ValidUntil _validUntil = ValidUntil.wrap(0);
+        ValidAfter _validAfter = ValidAfter.wrap(0);
+        getKernelStorage().execution[_moduleSelector] = ExecutionDetail({
+            executor: _executorAddr,
+            validator: IKernelValidator(_validatorAddr),
+            validUntil: _validUntil,
+            validAfter: _validAfter
+        });
+        IKernelValidator(_validatorAddr).enable(_data);
+        emit ExecutionChanged(_moduleSelector, _executorAddr, _validatorAddr);
     }
 }
