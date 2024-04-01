@@ -7,7 +7,10 @@ contract TestKernel is Kernel {
 
     function test_ignore() public {}
 
-    function sudoInitialize(IKernelValidator _defaultValidator, bytes calldata _data) external payable {
+    function sudoInitialize(IKernelValidator _defaultValidator, bytes calldata _data, address _registryAddr)
+        external
+        payable
+    {
         WalletKernelStorage storage ws = getKernelStorage();
         ws.defaultValidator = _defaultValidator;
         emit DefaultValidatorChanged(address(0), address(_defaultValidator));

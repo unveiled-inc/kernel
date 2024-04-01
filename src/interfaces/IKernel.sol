@@ -27,7 +27,7 @@ interface IKernel {
 
     error DeprecatedOperation();
 
-    function initialize(IKernelValidator _validator, bytes calldata _data) external payable;
+    function initialize(IKernelValidator _validator, bytes calldata _data, address _registryAddr) external payable;
 
     function upgradeTo(address _newImplementation) external payable;
 
