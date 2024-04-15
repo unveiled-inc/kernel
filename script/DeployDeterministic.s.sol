@@ -17,10 +17,14 @@ contract DeployDeterministic is Script {
         KernelFactory factory = KernelFactory(payable(FactoryDeploy.deploy()));
 
         address k24 = address(0xd3082872F8B06073A021b4602e022d5A070d7cfC);
+        address k24_1tx = address(0xac8C2458377Bd372221007CC91739d9FC6a7B957);
         address k23lite = address(0x482EC42E88a781485E1B6A4f07a0C5479d183291);
 
         if (!factory.isAllowedImplementation(k24)) {
             factory.setImplementation(k24, true);
+        }
+        if (!factory.isAllowedImplementation(k24_1tx)) {
+            factory.setImplementation(k24_1tx, true);
         }
         if (!factory.isAllowedImplementation(k23lite)) {
             factory.setImplementation(k23lite, true);
