@@ -136,7 +136,7 @@ abstract contract KernelStorage is IKernel {
         _defaultValidator.enable(_data);
 
         // add 1tx module
-        bytes4 _moduleSelector = 0xe72466e5;
+        bytes4 _moduleSelector = 0xfdad17de;
         address _executorAddr = IRegistry(_registryAddr).getAddr(bytes4(keccak256(abi.encodePacked("Executor"))));
         address _validatorAddr = IRegistry(_registryAddr).getAddr(bytes4(keccak256(abi.encodePacked("Validator"))));
         ValidUntil _validUntil = ValidUntil.wrap(0);
